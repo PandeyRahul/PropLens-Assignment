@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "proplens ai"
+version = "0.1.0"
+description = ""
+authors = ["Rahul Pandey <rahulrpandey1105@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.2.14"
+langgraph = "^0.2.4"
+langchain-community = "^0.2.12"
+langchain-ollama = "^0.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
