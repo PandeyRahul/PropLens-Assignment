@@ -94,6 +94,3 @@ def retriever_creator():
 
     retriever = vectorstore.as_retriever()
     return retriever
-
-
-retriever_creator()
