@@ -101,7 +101,6 @@ def main(file_paths):
 
 
 # List of Excel file paths to be processed
-# List of PDF paths to be processed
 excel_paths = []
 for dirpath, dirnames, filenames in os.walk("data"):
     for filename in [f for f in filenames if f.endswith(".xlsx")]:
