@@ -100,7 +100,7 @@ def handle_image_description(image_path, user_question):
 
 
 # Sample image path and user input
-image_path = "./data/Tembusu grand 1 Bed + Study unit plan.png"
+image_path = "../data/Tembusu grand 1 Bed + Study unit plan.png"
 user_question = input("Please ask your question.\n")
 
 # Handle the image description request using the LLM agent

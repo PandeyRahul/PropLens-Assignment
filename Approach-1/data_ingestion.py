@@ -19,11 +19,11 @@ from langchain_community.cache import InMemoryCache
 set_llm_cache(InMemoryCache())
 
 # Define paths, constants and embedding function
-directory_path = os.path.abspath("data")
-text_vectorstore_path = "vectorstore/text"
-image_vectorstore_path = "vectorstore/image"
-web_vectorstore_path = "vectorstore/web"
-multi_vectorstore_path = "vectorstore/multi"
+directory_path = os.path.abspath("../data")
+text_vectorstore_path = "../vectorstore/text"
+image_vectorstore_path = "../vectorstore/image"
+web_vectorstore_path = "../vectorstore/web"
+multi_vectorstore_path = "../vectorstore/multi"
 chunk_size = 100
 chunk_overlap = 10
 batch_size = 100
