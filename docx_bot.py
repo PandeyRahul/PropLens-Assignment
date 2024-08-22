@@ -1,4 +1,3 @@
-import os
 import docx
 import requests
 from bs4 import BeautifulSoup
@@ -11,7 +10,7 @@ import warnings
 import nltk
 
 # Ensure the NLTK sentence tokenizer is downloaded
-nltk.download('punkt_tab')
+nltk.download('punkt')
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
@@ -122,8 +121,8 @@ def create_retrieval_qa_chain(vectorstore):
     return qa_chain
 
 
-# Main function
-def main(docx_paths):
+# Function to handle the query via FastAPI route
+def handle_docx_query(query, docx_paths):
     # Step 1: Process docx files
     documents = process_docx_files(docx_paths)
 
@@ -136,25 +135,6 @@ def main(docx_paths):
     # Step 4: Create RetrievalQA chain
     qa_chain = create_retrieval_qa_chain(vectorstore)
 
-    # Continuous interaction loop
-    while True:
-        print("\nBot: Please ask any question related to the documents or type 'exit' to quit.")
-        query = input("You: ")
-
-        if query.lower() in ["exit", "quit"]:
-            print("Bot: Goodbye!")
-            break
-
-        response = qa_chain.invoke({"query": query})
-        print("Bot: ", response["result"])
-
-
-# List of .docx file paths to be processed
-docx_paths = []
-for dirpath, dirnames, filenames in os.walk("data"):
-    for filename in [f for f in filenames if f.endswith(".docx")]:
-        docx_paths.append(os.path.join(os.path.abspath("data"), filename))
-
-# Run the main function
-if __name__ == "__main__":
-    main(docx_paths)
+    # Step 5: Handle the query
+    response = qa_chain.invoke({"query": query})
+    return response["result"]
