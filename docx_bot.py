@@ -8,6 +8,10 @@ from langchain.chains import RetrievalQA
 from langchain_ollama.llms import OllamaLLM
 from langchain_huggingface import HuggingFaceEmbeddings
 import warnings
+import nltk
+
+# Ensure the NLTK sentence tokenizer is downloaded
+nltk.download('punkt_tab')
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
@@ -42,6 +46,11 @@ def extract_and_append_link_data(text):
     return "\n".join(link_texts)
 
 
+# Function to split text into sentences
+def split_text_into_sentences(text):
+    return nltk.tokenize.sent_tokenize(text)
+
+
 # Function to process docx files, including handling links
 def process_docx_files(docx_paths):
     documents = []
@@ -60,17 +69,31 @@ def process_docx_files(docx_paths):
     return documents
 
 
-# Function to load and chunk the documents
+# Function to load and chunk the documents with more granular splitting
 def load_and_chunk_documents(documents):
-    # Reduce chunk size to avoid token length errors
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=100)
     chunked_documents = []
-
     for doc in documents:
-        chunks = text_splitter.split_text(doc["page_content"])
-        for chunk in chunks:
+        # Split the text into sentences
+        sentences = split_text_into_sentences(doc["page_content"])
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=150, chunk_overlap=50)
+
+        # Join sentences into chunks that fit the token limit
+        current_chunk = ""
+        for sentence in sentences:
+            if len(current_chunk) + len(sentence) > 150:
+                # When the chunk exceeds the limit, add it to the list and start a new chunk
+                chunked_documents.append({
+                    "page_content": current_chunk.strip(),
+                    "metadata": doc["metadata"]
+                })
+                current_chunk = sentence
+            else:
+                current_chunk += " " + sentence
+
+        # Add any remaining text as the last chunk
+        if current_chunk:
             chunked_documents.append({
-                "page_content": chunk,
+                "page_content": current_chunk.strip(),
                 "metadata": doc["metadata"]
             })
 
@@ -104,7 +127,7 @@ def main(docx_paths):
     # Step 1: Process docx files
     documents = process_docx_files(docx_paths)
 
-    # Step 2: Chunk the documents
+    # Step 2: Chunk the documents with more granular splitting
     chunked_documents = load_and_chunk_documents(documents)
 
     # Step 3: Create FAISS index
